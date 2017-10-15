@@ -1,43 +1,44 @@
 #include "robot.h"
 
-struct Matrix* MatrixCreate(unsigned int row, unsigned int col) {
-  struct Matrix *matrix = (struct Matrix*)malloc(sizeof(struct Matrix));
+struct Matrix* CreateDirectionMatrix(struct Matrix *map) {
+  int x, y, col, row;
+  unsigned int i, j, val;
+  struct Matrix *direction = MatrixCreate(map->row, map->col);
 
-  matrix->row = row;
-  matrix->col = col;
-  matrix->len = row*col;
+  for (i = 0; i < map->len; i += 1) {
+    val = AL;
 
-  matrix->self = (long double*)malloc(sizeof(long double)*(matrix->len));
+    for (j = EE; j < AL; j = j << 1) {
+      DirectionComponents(j, &x, &y);
 
-  memset((void*)(matrix->self), 0, sizeof(long double)*(row*col));
+      row = i/map->col+y;
+      col = i%map->col+x;
 
-  return matrix;
-}
-
-struct Matrix* MatrixMultiply(struct Matrix *a, struct Matrix *b) {
-  struct Matrix *c = MatrixCreate(a->row, b->col);
-
-  unsigned int i, j, k;
-
-  for (i = 0; i < a->col; i += 1) {
-    for (j = 0; j < b->row; j += 1) {
-      for (k = 0; k < a->row; k += 1) {
-        *(c->self+j+i*c->col) = *(a->self+k+i*a->col) + *(b->self+j+k*b->col);
+      if ((row >= 0) && (row < map->row) &&
+          (col >= 0) && (col < map->col) &&
+          (MatrixGet(map, row, col) == 0.0)) {
+        val = val ^ j;
       }
     }
+
+    MatrixSet(direction, i/map->col, i%map->col, val);
   }
 
-  return c;
+  return direction;
 }
 
-void MatrixOutput(struct Matrix *matrix) {
-  unsigned int i, j;
+struct Matrix* CreateTransitivityMatrix(struct Matrix *direction) {
+  struct Matrix *transitivity = MatrixCreate(direction->row, direction->col);
 
-  for (i = 0; i < matrix->len; i += 1) {
-    printf((i%matrix->col == matrix->col-1) ? "%.12Le\n" : "%.12Le  ", *(matrix->self+i));
-  }
+  return transitivity;
 }
 
-void MatrixDestroy(struct Matrix **matrix) {
-  free(*matrix);
+unsigned int DirectionDifference(Direction a, Direction b) {
+  return (((a & NN) == (b & EE))+((a & NE) == (b & NE))+((a & NN) == (b & NN))+((a & NW) == (b & NW))+
+          ((a & WW) == (b & WW))+((a & SW) == (b & SW))+((a & SS) == (b & SS))+((a & SE) == (b & SE)));
+}
+
+void DirectionComponents(Direction dir, int *x, int *y) {
+  *x = ((dir & (NE | EE | SE)) ? 1 : 0)-((dir & (NW | WW | SW)) ? 1 : 0);
+  *y = ((dir & (SE | SS | SW)) ? 1 : 0)-((dir & (NE | NN | NW)) ? 1 : 0);
 }
