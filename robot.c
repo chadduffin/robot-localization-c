@@ -112,18 +112,17 @@ struct Matrix* CreateJointPredictionMatrix(struct Matrix *collision) {
   return joint_prediction;
 }
 
-unsigned int DirectionDifference(Direction a, Direction b) {
+unsigned int DirectionDifference(unsigned int a, unsigned int b) {
   return (((a & EE) != (b & EE))+((a & NE) != (b & NE))+((a & NN) != (b & NN))+((a & NW) != (b & NW))+
           ((a & WW) != (b & WW))+((a & SW) != (b & SW))+((a & SS) != (b & SS))+((a & SE) != (b & SE)));
 }
 
-unsigned int DirectionAdjacentOpen(Direction dir) {
+unsigned int DirectionAdjacentOpen(unsigned int dir) {
   return (!(dir & EE)+!(dir & NE)+!(dir & NN)+!(dir & NW)+!(dir & WW)+!(dir & SW)+!(dir & SS)+!(dir & SE));
 }
 
 unsigned int DirectionFromChar(char *observation) {
-  unsigned int i;
-  Direction dir = 0;
+  unsigned int i, dir = 0;
 
   for (i = 0; i < 16; i += 2) {
     if (*(observation+i) == 0) { break; }
@@ -174,7 +173,7 @@ void FillObservationMatrix(struct Matrix *observation, struct Matrix *direction,
   }
 }
 
-void DirectionComponents(Direction dir, int *x, int *y) {
+void DirectionComponents(unsigned int dir, int *x, int *y) {
   *x = ((dir & (NE | EE | SE)) ? 1 : 0)-((dir & (NW | WW | SW)) ? 1 : 0);
   *y = ((dir & (SE | SS | SW)) ? 1 : 0)-((dir & (NE | NN | NW)) ? 1 : 0);
 }
@@ -186,7 +185,7 @@ void Localize(int argc, char **argv) {
   }
 
   char o[16];
-  unsigned int i, n;
+  unsigned int i, n, dir;
   struct Matrix *error = CreateErrorMatrix(atof(argv[1])),
                 *collision = CreateCollisionMatrix(argv[2]),
                 *direction = CreateDirectionMatrix(collision),
@@ -196,7 +195,6 @@ void Localize(int argc, char **argv) {
                 *observation = MatrixCreate(collision->len, collision->len),
                 *result;
   FILE *file = fopen(argv[3], "r");
-  Direction dir;
 
   fscanf(file, "%i", &n);
 

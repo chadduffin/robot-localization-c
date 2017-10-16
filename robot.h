@@ -17,7 +17,7 @@
 #define SOUTHEAST 0x4553
 #define SOUTHWEST 0x5753
 
-typedef enum Direction {
+enum Direction {
   EE = 1,
   NE = 2,
   NN = 4,
@@ -28,7 +28,7 @@ typedef enum Direction {
   SE = 128,
 
   AL = EE | NE | NN | NW | WW | SW | SS | SE
-} Direction;
+};
 
 struct Matrix {
   long double *self;
@@ -41,11 +41,11 @@ struct Matrix* CreateCollisionMatrix(char *filename);
 struct Matrix* CreateDirectionMatrix(struct Matrix *map);
 struct Matrix* CreateTransitivityMatrix(struct Matrix *direction);
 struct Matrix* CreateJointPredictionMatrix(struct Matrix *collision);
-unsigned int DirectionDifference(Direction a, Direction b);
-unsigned int DirectionAdjacentOpen(Direction dir);
+unsigned int DirectionDifference(unsigned int a, unsigned int b);
+unsigned int DirectionAdjacentOpen(unsigned int dir);
 unsigned int DirectionFromChar(char *observation);
 void FillObservationMatrix(struct Matrix *observation, struct Matrix *transitivity, struct Matrix *error, unsigned int dir);
-void DirectionComponents(Direction dir, int *x, int *y);
+void DirectionComponents(unsigned dir, int *x, int *y);
 void Localize(int argc, char **argv);
 
 /* matrix.c */
@@ -54,7 +54,6 @@ struct Matrix* MatrixMultiply(struct Matrix *a, struct Matrix *b);
 long double MatrixGet(struct Matrix *matrix, unsigned int row, unsigned int col);
 void MatrixSet(struct Matrix *matrix, unsigned int row, unsigned int col, long double value);
 void MatrixOutput(struct Matrix *matrix);
-void MatrixOutputInt(struct Matrix *matrix);
 void MatrixDestroy(struct Matrix **matrix);
 
 /* ncurses.c */

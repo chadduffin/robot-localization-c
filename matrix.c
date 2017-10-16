@@ -50,14 +50,6 @@ void MatrixOutput(struct Matrix *matrix) {
   }
 }
 
-void MatrixOutputInt(struct Matrix *matrix) {
-  unsigned int i;
-
-  for (i = 0; i < matrix->len; i += 1) {
-    printf((i%matrix->col == matrix->col-1) ? "%5u\n" : "%5u", (unsigned int)(*(matrix->self+i)));
-  }
-}
-
 void MatrixDestroy(struct Matrix **matrix) {
   free(*matrix);
   
