@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <ncurses.h>
+
 #define NORTH 0x4E4E
 #define SOUTH 0x5353
 #define EAST 0x4545
@@ -54,5 +56,10 @@ void MatrixSet(struct Matrix *matrix, unsigned int row, unsigned int col, long d
 void MatrixOutput(struct Matrix *matrix);
 void MatrixOutputInt(struct Matrix *matrix);
 void MatrixDestroy(struct Matrix **matrix);
+
+/* ncurses.c */
+void NcursesInit(void);
+void NcursesQuit(void);
+void NcursesRender(struct Matrix *collision, struct Matrix *result);
 
 #endif /* __ROBOT__ */

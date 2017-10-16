@@ -15,7 +15,7 @@ run: clean all
 	./$(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(TARGET)
+	$(CC) $(OBJECTS) -lncurses -o $(TARGET)
 
 clean:
 	rm -f *.o

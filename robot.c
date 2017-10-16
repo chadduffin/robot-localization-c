@@ -186,7 +186,6 @@ void Localize(int argc, char **argv) {
   }
 
   char o[16];
-  long double max;
   unsigned int i, n;
   struct Matrix *error = CreateErrorMatrix(atof(argv[1])),
                 *collision = CreateCollisionMatrix(argv[2]),
@@ -214,20 +213,10 @@ void Localize(int argc, char **argv) {
 
     joint_prediction = MatrixMultiply(observation, result);
 
+    NcursesRender(collision, joint_prediction);
+
     MatrixDestroy(&result);
   }
-
-  max = -1.0;
-  n = -1;
-
-  for (i = 0; i < joint_prediction->len; i += 1) {
-    if (MatrixGet(joint_prediction, i, 0) > max) {
-      max = MatrixGet(joint_prediction, i, 0);
-      n = i;
-    }
-  }
-
-  printf("%Le is the max at %u, %u.\n", max, n/collision->col, n%collision->col);
 
   MatrixDestroy(&joint_prediction);
   MatrixDestroy(&transitivity);
